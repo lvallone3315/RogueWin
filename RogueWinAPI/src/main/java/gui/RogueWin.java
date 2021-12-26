@@ -189,8 +189,7 @@ public class RogueWin {
         gridPanel.setUseImages(useImages);
         gridPanel.setCharTiles(chars);
 
-        //frame.revalidate();
-        //frame.repaint();
+        frame.repaint();
     }
 
     /**

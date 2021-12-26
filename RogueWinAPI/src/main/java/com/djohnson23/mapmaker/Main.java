@@ -24,7 +24,7 @@ public class Main {
         Tileset defaultTiles = new Tileset("res/DefaultTiles.png", 12, 12);
 
         RogueWin window = new RogueWin("My Map", 800, 800, 30);
-        
+
         window.displayMap(randomGrid(window.getGridSize()));
 
         /*
@@ -42,20 +42,20 @@ public class Main {
         window.addLayer(layer2);
         
         window.updateLayer(0, tiles);
-
+         */
         try {
-            
-            while(true) {
+
+            while (true) {
                 window.displayMap(randomGrid(window.getGridSize()));
                 Thread.sleep(1000);
-                
-                window.setGridSize((int)(Math.random() * 21 + 10));
-                
+
+                window.setGridSize((int) (Math.random() * 21 + 10));
+
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-         */
+
     }
 
     private static char[][] randomGrid(int gridSize) {
