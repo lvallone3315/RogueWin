@@ -23,7 +23,7 @@ public class Main {
 
         Tileset defaultTiles = new Tileset("res/DefaultTiles.png", 12, 12);
 
-        RogueWin window = new RogueWin("My Map", 800, 800, -5);
+        RogueWin window = new RogueWin("My Map", 800, 800, 30);
         
         window.displayMap(randomGrid(window.getGridSize()));
 

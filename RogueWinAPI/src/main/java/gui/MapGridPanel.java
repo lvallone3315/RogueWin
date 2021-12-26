@@ -6,11 +6,13 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -23,9 +25,9 @@ class MapGridPanel extends JPanel {
 
     ArrayList<ImageGridLayer> layers;
 
-    JPanel characterPanel;
-    JLabel[][] charTiles;
+    char[][] charTiles;
     boolean useImages;
+    Font tileFont;
 
     public MapGridPanel(int gridSize, boolean useImages, int width, int height) {
 
@@ -36,30 +38,18 @@ class MapGridPanel extends JPanel {
         this.gridSize = gridSize;
         this.useImages = useImages;
 
-        characterPanel = new JPanel();
-        characterPanel.setSize(width, height);
-        characterPanel.setLayout(new GridLayout(gridSize, gridSize));
-
-        charTiles = new JLabel[gridSize][gridSize];
+        charTiles = new char[gridSize][gridSize];
 
         int w = width / gridSize;
         int h = height / gridSize;
         Dimension tileSize = new Dimension(w, h);
-        Font tileFont = createFont(tileSize);
+        this.tileFont = createFont(tileSize);
 
         for (int r = 0; r < gridSize; r++) {
             for (int c = 0; c < gridSize; c++) {
-                JLabel newLabel = new JLabel(" ");
-                newLabel.setVerticalAlignment(JLabel.CENTER);
-                newLabel.setHorizontalAlignment(JLabel.CENTER);
-                newLabel.setFont(tileFont);
-                charTiles[r][c] = newLabel;
-                characterPanel.add(newLabel);
+                charTiles[r][c] = ' ';
             }
         }
-
-        add(characterPanel);
-        characterPanel.setVisible(!useImages);
 
         setSize(width, height);
 
@@ -97,17 +87,12 @@ class MapGridPanel extends JPanel {
             System.out.println("Invalid newTiles char array");
             return;
         }
-
-        for (int r = 0; r < gridSize; r++) {
-            for (int c = 0; c < gridSize; c++) {
-                charTiles[r][c].setText(String.valueOf(newTiles[r][c]));
-            }
-        }
+        
+        charTiles = newTiles.clone();
     }
 
     public void setUseImages(boolean useImages) {
         this.useImages = useImages;
-        characterPanel.setVisible(!useImages);
     }
     
     private Font createFont(Dimension tileSize) {
@@ -129,23 +114,15 @@ class MapGridPanel extends JPanel {
         int h = height / gridSize;
 
         Dimension tileSize = new Dimension(w, h);
-        Font tileFont = createFont(tileSize);
-
-        for (int r = 0; r < gridSize; r++) {
-            for (int c = 0; c < gridSize; c++) {
-                charTiles[r][c].setPreferredSize(tileSize);
-                charTiles[r][c].setSize(tileSize);
-                charTiles[r][c].setFont(tileFont);
-            }
-        }
+        this.tileFont = createFont(tileSize);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int w = getWidth() / gridSize;
-        int h = getHeight() / gridSize;
+        float tileWidth = getWidth() / (float)gridSize;
+        float tileHeight = getHeight() / (float)gridSize;
 
         if (useImages) {
             for (ImageGridLayer layer : layers) {
@@ -153,8 +130,37 @@ class MapGridPanel extends JPanel {
                     for (int c = 0; c < gridSize; c++) {
                         BufferedImage image = layer.getTile(r, c);
 
-                        g.drawImage(image, c * w, r * h, w, h, this);
+                        g.drawImage(image, (int)(c * tileWidth), (int)(r * tileHeight), (int)tileWidth, (int)tileHeight, this);
                     }
+                }
+            }
+        }
+        else {
+            
+            if(g instanceof Graphics2D) {
+                Graphics2D g2 = (Graphics2D)g;
+                
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            }
+            
+            g.setFont(tileFont);
+            
+            FontMetrics metrics = g.getFontMetrics();
+            float halfTileHeight = tileHeight / 2.0f;
+            float halfTileWidth = tileWidth / 2.0f;
+            
+            for(int r = 0; r < gridSize; r++) {
+                for(int c = 0; c < gridSize; c++) {
+                    String text = String.valueOf(charTiles[r][c]);
+                    Rectangle2D rect = metrics.getStringBounds(text, g);
+                    
+                    float halfWidth = (float)(rect.getWidth() / 2);
+                    float halfHeight = (float)(rect.getHeight() / 2);
+                    
+                    int x = (int)(c * tileWidth + halfTileWidth - halfWidth);
+                    int y = (int)(r * tileHeight + halfTileHeight + halfHeight);
+                    
+                    g.drawString(text, x, y);
                 }
             }
         }
