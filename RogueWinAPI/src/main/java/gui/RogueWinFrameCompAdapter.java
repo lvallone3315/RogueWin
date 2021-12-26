@@ -12,11 +12,11 @@ import javax.swing.JFrame;
  *
  * @author Dylan Johnson
  */
-class RogueWinFrameAdapter extends ComponentAdapter {
+class RogueWinFrameCompAdapter extends ComponentAdapter {
     
     MapGridPanel gridPanel;
     
-    public RogueWinFrameAdapter(MapGridPanel gridPanel) {
+    public RogueWinFrameCompAdapter(MapGridPanel gridPanel) {
         super();
         
         this.gridPanel = gridPanel;
@@ -32,6 +32,7 @@ class RogueWinFrameAdapter extends ComponentAdapter {
     
     @Override
     public void componentResized(ComponentEvent evt) {
+        
         JFrame frame = (JFrame)evt.getSource();
         
         if(frame == null)
