@@ -49,7 +49,9 @@ public class Main {
                 window.displayMap(randomGrid(window.getGridSize()));
                 Thread.sleep(1000);
 
-                window.setGridSize((int) (Math.random() * 21 + 10));
+                int max = RogueWin.MAX_GRIDSIZE, min = RogueWin.MIN_GRIDSIZE;
+                
+                window.setGridSize((int) (Math.random() * (max - min + 1) + min));
 
             }
         } catch (InterruptedException ex) {

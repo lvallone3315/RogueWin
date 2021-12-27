@@ -17,8 +17,8 @@ import javax.swing.JFrame;
  */
 public class RogueWin {
 
-    private static final int MIN_GRIDSIZE = 5;
-    private static final int MAX_GRIDSIZE = 30;
+    public static final int MIN_GRIDSIZE = 5;
+    public static final int MAX_GRIDSIZE = 30;
 
     JFrame frame;
     String title;
@@ -38,7 +38,7 @@ public class RogueWin {
      * @param width The width (in px) of the window to be created
      * @param height The height (in px) of the window to be created
      * @param gridSize The size of the grid of tiles/characters for the map -
-     * always a square grid. Must be in range (5, 30)
+     * always a square grid. Must be in range ({@value MIN_GRIDSIZE}, {@value MAX_GRIDSIZE})
      */
     public RogueWin(String title, int width, int height, int gridSize) {
 
@@ -141,7 +141,7 @@ public class RogueWin {
      * immediately after setting the gridSize
      *
      * @param gridSize New grid size for the map - number of rows and columns.
-     * Must be between 5 and 30
+     * Must be between {@value MIN_GRIDSIZE} and {@value MAX_GRIDSIZE}
      */
     public void setGridSize(int gridSize) {
         gridSize = GUIUtils.clamp(gridSize, MIN_GRIDSIZE, MAX_GRIDSIZE);
