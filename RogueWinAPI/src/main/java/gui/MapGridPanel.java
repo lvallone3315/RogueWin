@@ -75,8 +75,7 @@ class MapGridPanel extends JPanel {
 
     public ImageGridLayer getLayer(int index) {
         if (index < 0 || index >= layers.size()) {
-            System.out.println("Invalid layer index: " + index);
-            return null;
+            throw new IndexOutOfBoundsException(index);
         }
 
         return layers.get(index);
@@ -84,21 +83,20 @@ class MapGridPanel extends JPanel {
 
     public void setCharTiles(char[][] newTiles) {
         if (newTiles.length != gridSize || newTiles[0].length != gridSize) {
-            System.out.println("Invalid newTiles char array");
-            return;
+            throw new IllegalGridSizeException(newTiles);
         }
-        
+
         charTiles = newTiles.clone();
     }
 
     public void setUseImages(boolean useImages) {
         this.useImages = useImages;
     }
-    
+
     private Font createFont(Dimension tileSize) {
-        
+
         int min = Math.min(tileSize.height, tileSize.width);
-        
+
         return new Font("Monospaced", Font.PLAIN, min / 2);
     }
 
@@ -121,47 +119,53 @@ class MapGridPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        float tileWidth = getWidth() / (float)gridSize;
-        float tileHeight = getHeight() / (float)gridSize;
+        float tileWidth = getWidth() / (float) gridSize;
+        float tileHeight = getHeight() / (float) gridSize;
 
         if (useImages) {
-            for (ImageGridLayer layer : layers) {
-                for (int r = 0; r < gridSize; r++) {
-                    for (int c = 0; c < gridSize; c++) {
-                        BufferedImage image = layer.getTile(r, c);
+            paintImages(g, tileWidth, tileHeight);
+        } else {
+            paintCharacters(g, tileWidth, tileHeight);
+        }
+    }
 
-                        g.drawImage(image, (int)(c * tileWidth), (int)(r * tileHeight), (int)tileWidth, (int)tileHeight, this);
-                    }
+    private void paintImages(Graphics g, float tileWidth, float tileHeight) {
+        for (ImageGridLayer layer : layers) {
+            for (int r = 0; r < gridSize; r++) {
+                for (int c = 0; c < gridSize; c++) {
+                    BufferedImage image = layer.getTile(r, c);
+
+                    g.drawImage(image, (int) (c * tileWidth), (int) (r * tileHeight), (int) tileWidth, (int) tileHeight, this);
                 }
             }
         }
-        else {
-            
-            if(g instanceof Graphics2D) {
-                Graphics2D g2 = (Graphics2D)g;
-                
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            }
-            
-            g.setFont(tileFont);
-            
-            FontMetrics metrics = g.getFontMetrics();
-            float halfTileHeight = tileHeight / 2.0f;
-            float halfTileWidth = tileWidth / 2.0f;
-            
-            for(int r = 0; r < gridSize; r++) {
-                for(int c = 0; c < gridSize; c++) {
-                    String text = String.valueOf(charTiles[r][c]);
-                    Rectangle2D rect = metrics.getStringBounds(text, g);
-                    
-                    float halfWidth = (float)(rect.getWidth() / 2);
-                    float halfHeight = (float)(rect.getHeight() / 2);
-                    
-                    int x = (int)(c * tileWidth + halfTileWidth - halfWidth);
-                    int y = (int)(r * tileHeight + halfTileHeight + halfHeight);
-                    
-                    g.drawString(text, x, y);
-                }
+    }
+
+    private void paintCharacters(Graphics g, float tileWidth, float tileHeight) {
+        if (g instanceof Graphics2D) {
+            Graphics2D g2 = (Graphics2D) g;
+
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+
+        g.setFont(tileFont);
+
+        FontMetrics metrics = g.getFontMetrics();
+        float halfTileHeight = tileHeight / 2.0f;
+        float halfTileWidth = tileWidth / 2.0f;
+
+        for (int r = 0; r < gridSize; r++) {
+            for (int c = 0; c < gridSize; c++) {
+                String text = String.valueOf(charTiles[r][c]);
+                Rectangle2D rect = metrics.getStringBounds(text, g);
+
+                float halfWidth = (float) (rect.getWidth() / 2);
+                float halfHeight = (float) (rect.getHeight() / 2);
+
+                int x = (int) (c * tileWidth + halfTileWidth - halfWidth);
+                int y = (int) (r * tileHeight + halfTileHeight + halfHeight);
+
+                g.drawString(text, x, y);
             }
         }
     }

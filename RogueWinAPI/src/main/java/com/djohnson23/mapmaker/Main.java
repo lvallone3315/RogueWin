@@ -4,6 +4,7 @@ import gui.RogueWin;
 import gui.Tileset;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,15 +44,20 @@ public class Main {
         
         window.updateLayer(0, tiles);
          */
+        
+        Random random = new Random();
+        
         try {
-
             while (true) {
                 window.displayMap(randomGrid(window.getGridSize()));
                 Thread.sleep(1000);
 
-                int max = RogueWin.MAX_GRIDSIZE, min = RogueWin.MIN_GRIDSIZE;
+                int max = RogueWin.MAX_GRIDSIZE;
+                int min = RogueWin.MIN_GRIDSIZE;
                 
-                window.setGridSize((int) (Math.random() * (max - min + 1) + min));
+                int size = random.nextInt(max - min + 1) + min;
+                
+                window.setGridSize(size);
 
             }
         } catch (InterruptedException ex) {

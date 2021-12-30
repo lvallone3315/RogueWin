@@ -10,23 +10,65 @@ import javax.swing.JFrame;
 
 /**
  *
- * Class to manage all gui elements for a roguelike game. Can be used with both
- * a character grid or a grid of images to display the map with
- *
+ * Class to manage all gui elements for a roguelike game, can be used to display
+ * either a character grid representation of a map or a grid of image tiles for
+ * a visual representation of the map.
+ * <br>
+ * <h2> Creating a RogueWin window </h2>
+ * RogueWin {windowName} = new RogueWin({title}, {screen width in px}, {screen
+ * height in px}, {gridSize in characters});
+ * <br>
+ * char[][] grid = new char[gridSize][gridSize];
+ * <br>
+ * {Initialize grid array of characters}
+ * <br>
+ * {windowName}.displayMap(grid);
  * @author Dylan Johnson
  */
 public class RogueWin {
 
+    /**
+     * Default gridSize for the map: {@value DEFAULT_GRIDSIZE}
+     */
+    public static final int DEFAULT_GRIDSIZE = 10;
+    /**
+     * Default width for the window: {@value DEFAULT_WIN_WIDTH}px
+     */
+    public static final int DEFAULT_WIN_WIDTH = 800;
+    /**
+     * Default height for the window: {@value DEFAULT_WIN_HEIGHT}px
+     */
+    public static final int DEFAULT_WIN_HEIGHT = 800;
+    /**
+     * Default title for the window: {@value DEFAULT_TITLE}
+     */
+    public static final String DEFAULT_TITLE = "Rogue Map";
+
+    /**
+     * Minimum gridSize for the window: {@value MIN_GRIDSIZE}
+     */
     public static final int MIN_GRIDSIZE = 5;
+    /**
+     * Maximum gridSize for the window: {@value MAX_GRIDSIZE}
+     */
     public static final int MAX_GRIDSIZE = 30;
 
-    JFrame frame;
-    String title;
-    int gridSize;
+    /**
+     * Minimum size for the window width and height: {@value MIN_SCREEN_SIZE}px
+     */
+    public static final int MIN_SCREEN_SIZE = 100;
 
-    MapGridPanel gridPanel;
-    RogueWinFrameCompAdapter compAdapter;
-    RogueWinWindowAdapter winAdapter;
+    /**
+     * Maximum length of the title of the window: {@value MAX_TITLE_LENGTH}ch
+     */
+    public static final int MAX_TITLE_LENGTH = 20;
+
+    private JFrame frame;
+    private int gridSize;
+
+    private MapGridPanel gridPanel;
+    private RogueWinFrameCompAdapter compAdapter;
+    private RogueWinWindowAdapter winAdapter;
 
     /**
      *
@@ -34,17 +76,23 @@ public class RogueWin {
      * characters to a single space (Empty) and creates a window that is not
      * resizeable
      *
-     * @param title The title of the window to be created
-     * @param width The width (in px) of the window to be created
-     * @param height The height (in px) of the window to be created
+     * @param title The title of the window to be created - at most
+     * {@value MAX_TITLE_LENGTH} characters
+     * @param width The width (in px) of the window to be created - must be at
+     * least {@value MIN_SCREEN_SIZE}
+     * @param height The height (in px) of the window to be created - must be at
+     * least {@value MIN_SCREEN_SIZE}
      * @param gridSize The size of the grid of tiles/characters for the map -
-     * always a square grid. Must be in range ({@value MIN_GRIDSIZE}, {@value MAX_GRIDSIZE})
+     * always a square grid. Must be in range
+     * ({@value MIN_GRIDSIZE}, {@value MAX_GRIDSIZE})
      */
     public RogueWin(String title, int width, int height, int gridSize) {
 
         gridSize = GUIUtils.clamp(gridSize, MIN_GRIDSIZE, MAX_GRIDSIZE);
+        width = Math.max(width, MIN_SCREEN_SIZE);
+        height = Math.max(height, MIN_SCREEN_SIZE);
+        title = validateTitle(title);
 
-        this.title = title;
         this.gridSize = gridSize;
 
         frame = new JFrame();
@@ -52,7 +100,6 @@ public class RogueWin {
         setContentSize(width, height);
 
         frame.setTitle(title);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setVisible(true);
 
@@ -67,11 +114,13 @@ public class RogueWin {
     }
 
     /**
-     * Creates the window for the map with default width and height of 800px and
-     * a grid size of 10
+     * Creates the window for the map with the title {@value DEFAULT_TITLE},
+     * width of {@value DEFAULT_WIN_WIDTH}px, height of
+     * {@value DEFAULT_WIN_HEIGHT}px, and a grid size of
+     * {@value DEFAULT_GRIDSIZE}
      */
     public RogueWin() {
-        this("Rogue Map", 800, 800, 10);
+        this(DEFAULT_TITLE, DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT, DEFAULT_GRIDSIZE);
     }
 
     /**
@@ -79,7 +128,7 @@ public class RogueWin {
      * @return The title of the window
      */
     public String getTitle() {
-        return title;
+        return frame.getTitle();
     }
 
     /**
@@ -88,8 +137,7 @@ public class RogueWin {
      * @param title New title for the window
      */
     public void setTitle(String title) {
-        this.title = title;
-        frame.setTitle(title);
+        frame.setTitle(validateTitle(title));
     }
 
     /**
@@ -200,5 +248,23 @@ public class RogueWin {
      */
     public void displayMap(char[][] chars) {
         displayMap(chars, false);
+    }
+
+    /**
+     *
+     * @param title The title to be validated and returned
+     * @return Validated title truncated to {@value MAX_TITLE_LENGTH} if
+     * necessary or {@value DEFAULT_TITLE} if title is null
+     */
+    private String validateTitle(String title) {
+        if (title == null) {
+            return DEFAULT_TITLE;
+        }
+
+        if (title.length() > MAX_TITLE_LENGTH) {
+            return title.substring(0, MAX_TITLE_LENGTH);
+        }
+
+        return title;
     }
 }

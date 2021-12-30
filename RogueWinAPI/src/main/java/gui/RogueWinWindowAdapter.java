@@ -11,19 +11,24 @@ import java.awt.event.WindowEvent;
  *
  * @author Dylan Johnson
  */
-public class RogueWinWindowAdapter extends WindowAdapter {
+class RogueWinWindowAdapter extends WindowAdapter {
 
     private static int windowCount = 0;
-    
+
     public RogueWinWindowAdapter() {
+        super();
         windowCount++;
+    }
+
+    private static void decrementCount() {
+        windowCount--;
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        windowCount--;
-        
-        if(windowCount == 0) {
+        decrementCount();
+
+        if (windowCount == 0) {
             System.exit(0);
         }
     }
