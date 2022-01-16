@@ -1,7 +1,9 @@
 package com.djohnson23.mapmaker;
 
 import gui.RogueWin;
+import gui.RogueWinBehavior;
 import gui.Tileset;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Random;
@@ -28,6 +30,27 @@ public class Main {
 
         window.displayMap(randomGrid(window.getGridSize()));
 
+        window.addBehavior(new RogueWinBehavior() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_UP) {
+                    System.out.println("Up Key Pressed!");
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                
+            }
+
+            @Override
+            public void keyDown(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_UP) {
+                    System.out.println("Up Key Down!");
+                }
+            }
+        });
+
         /*
         BufferedImage[][] tiles = new BufferedImage[defaultTiles.getRows()][defaultTiles.getRows()];
        
@@ -44,9 +67,8 @@ public class Main {
         
         window.updateLayer(0, tiles);
          */
-        
         Random random = new Random();
-        
+
         try {
             while (true) {
                 window.displayMap(randomGrid(window.getGridSize()));
@@ -54,9 +76,9 @@ public class Main {
 
                 int max = RogueWin.MAX_GRIDSIZE;
                 int min = RogueWin.MIN_GRIDSIZE;
-                
+
                 int size = random.nextInt(max - min + 1) + min;
-                
+
                 window.setGridSize(size);
 
             }

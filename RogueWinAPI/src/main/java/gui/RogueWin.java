@@ -5,7 +5,10 @@
 package gui;
 
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 
 /**
@@ -23,6 +26,7 @@ import javax.swing.JFrame;
  * {Initialize grid array of characters}
  * <br>
  * {windowName}.displayMap(grid);
+ *
  * @author Dylan Johnson
  */
 public class RogueWin {
@@ -69,6 +73,7 @@ public class RogueWin {
     private MapGridPanel gridPanel;
     private RogueWinFrameCompAdapter compAdapter;
     private RogueWinWindowAdapter winAdapter;
+    private RogueWinKeyListener keyListener;
 
     /**
      *
@@ -108,9 +113,11 @@ public class RogueWin {
 
         compAdapter = new RogueWinFrameCompAdapter(gridPanel);
         winAdapter = new RogueWinWindowAdapter();
+        keyListener = new RogueWinKeyListener();
 
         frame.addComponentListener(compAdapter);
         frame.addWindowListener(winAdapter);
+        frame.addKeyListener(keyListener);
     }
 
     /**
@@ -248,6 +255,20 @@ public class RogueWin {
      */
     public void displayMap(char[][] chars) {
         displayMap(chars, false);
+    }
+
+    /**
+     *
+     * Adds a new {@link RogueWinBehavior} instance to this RogueWin object.
+     * Check {@link RogueWinBehavior} documentation for more details on how it
+     * works numerous behaviors can be added to any one {@link RogueWin} object
+     * for different desired logic
+     *
+     * @param b Behavior class to be called for different events on this
+     * instance of {@link RogueWin}
+     */
+    public void addBehavior(RogueWinBehavior b) {
+        keyListener.addBehavior(b);
     }
 
     /**
